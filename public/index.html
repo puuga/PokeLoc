@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags always come first -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>PokeLoc</title>
+
+    <!-- firebase -->
+    <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyAZ77zzGPd7-Rnf4orOTbRMR8styQx6BLE",
+        authDomain: "pokeloc-341c0.firebaseapp.com",
+        databaseURL: "https://pokeloc-341c0.firebaseio.com",
+        storageBucket: "pokeloc-341c0.appspot.com",
+        messagingSenderId: "36886278637"
+      };
+      firebase.initializeApp(config);
+    </script>
+
+    <!-- bootstrap 4 -->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css"
+    integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj"
+    crossorigin="anonymous">
+
+    <!-- custom style -->
+    <style media="screen">
+      html, body {
+        height: 100%;
+      }
+      body {
+        padding-top: 54px;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- facebook -->
+    <script>
+      window.fbAsyncInit = function() {
+        FB.init({
+          appId      : '300622736986405',
+          xfbml      : true,
+          version    : 'v2.7'
+        });
+      };
+
+      (function(d, s, id){
+         var js, fjs = d.getElementsByTagName(s)[0];
+         if (d.getElementById(id)) {return;}
+         js = d.createElement(s); js.id = id;
+         js.src = "//connect.facebook.net/en_US/sdk.js";
+         fjs.parentNode.insertBefore(js, fjs);
+       }(document, 'script', 'facebook-jssdk'));
+    </script>
+
+    <!-- content -->
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-8">
+          <p>
+            One of three columns
+          </p>
+        </div>
+        <div class="col-sm-4">
+          One of three columns
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12">
+          <p>
+            <div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- nev bar -->
+    <nav class="navbar navbar-fixed-top navbar-dark bg-primary">
+      <a class="navbar-brand" href="#">PokeLoc</a>
+    </nav>
+
+    <!-- bootstrap 4 -->
+    <!-- jQuery first, then Tether, then Bootstrap JS. -->
+    <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"
+    integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY"
+    crossorigin="anonymous"></script>
+    <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js"
+    integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB"
+    crossorigin="anonymous"></script>
+    <script
+    src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js"
+    integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU"
+    crossorigin="anonymous"></script>
+  </body>
+</html>

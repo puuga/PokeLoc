@@ -28,6 +28,11 @@
     integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj"
     crossorigin="anonymous">
 
+    <script
+    src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"
+    integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY"
+    crossorigin="anonymous"></script>
+
     <!-- Material+Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
@@ -67,9 +72,200 @@
        }(document, 'script', 'facebook-jssdk'));
     </script>
 
+    <!-- content -->
+    <div class="container-fluid height-full">
+      <div class="row height-full">
+
+        <!-- map -->
+        <div class="col-sm-8 height-full">
+          <div class="width-full height-full" id="map"></div>
+          <script>
+            var map, mapModal, markerModal;
+            var makersOnMap = [];
+
+            var markerInfo = {
+              pokestop:{type:1,title:"PokéStop"},
+              gym:{type:2,title:"Gym"},
+              pokemonPoint:{type:3,title:"Pokémon Point"}
+            };
+
+            function initMap() {
+              // Create a map object and specify the DOM element for display.
+              map = new google.maps.Map(document.getElementById('map'), {
+                center: {lat: 12.40, lng: 99.90},
+                zoom: 5
+              });
+            }
+
+            function drawMarkerOnMap(pointType, lat, lng, displayName) {
+              var marker = new google.maps.Marker({
+                position: {lat: lat, lng: lng},
+                map: map,
+                title: pointType + "\nby: " + displayName,
+                animation: google.maps.Animation.DROP
+              });
+              makersOnMap.push(marker);
+            }
+
+            function clearAllMarkers() {
+              for (var i = 0; i < makersOnMap.length; i++) {
+                makersOnMap[i].setMap(null);
+              }
+              makersOnMap = [];
+            }
+          </script>
+        </div>
+
+        <!-- card list -->
+        <div class="col-sm-4 height-full">
+
+          <!-- add -->
+          <div class="row">
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-info"
+              data-toggle="modal" data-target="#actionModal"
+              data-action="PokeStop">
+                Add PokéStop
+              </button>
+            </div>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-secondary"
+              data-toggle="modal" data-target="#actionModal"
+              data-action="Gym">
+                Add Gym
+              </button>
+            </div>
+            <div class="col-sm-6">
+              <button type="button" class="btn btn-warning"
+              data-toggle="modal" data-target="#actionModal"
+              data-action="Pokemon Point">
+                Add Pokémon Point
+              </button>
+            </div>
+          </div>
+
+          <!-- list -->
+          <div class="row height-full">
+          </div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-sm-12">
+          <p>
+            <div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- action modal -->
+    <div class="modal fade" id="actionModal" tabindex="-1" role="dialog" aria-labelledby="actionModalLabel" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+            <h4 class="modal-title" id="actionModalLabel">New message</h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="width-full" style="height:400px" id="mapModal"></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="button" class="btn btn-primary" onclick="prepareSavePoint()">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      $("#actionModal").on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var action = button.data('action') // Extract info from data-* attributes
+        $("#actionModalLabel").html(action);
+      });
+
+      $("#actionModal").on('shown.bs.modal', function (event) {
+        var button = $(event.relatedTarget) // Button that triggered the modal
+        var action = button.data('action')
+        var markerType;
+        if (action==="PokeStop") {
+          markerType = markerInfo.pokestop;
+        } else if (action==="Gym") {
+          markerType = markerInfo.gym;
+        } else if (action==="Pokemon Point") {
+          markerType = markerInfo.pokemonPoint;
+        }
+        initMapModal(markerType);
+      });
+
+      function initMapModal(markerType) {
+        // Create a map object and specify the DOM element for display.
+        mapModal = new google.maps.Map(document.getElementById('mapModal'), {
+          center: {lat: 12.40, lng: 99.90},
+          zoom: 5
+        });
+
+        // Create a marker and set its position.
+        markerModal = new google.maps.Marker({
+          map: mapModal,
+          position: {lat: 12.40, lng: 99.90},
+          draggable: true,
+          animation: google.maps.Animation.DROP,
+          title: markerType.title
+        });
+
+        google.maps.event.addListener(markerModal, 'dragend', function() {
+          console.log("lat: "+markerModal.getPosition().lat()+", lng: "+markerModal.getPosition().lng());
+        });
+      }
+
+      function prepareSavePoint() {
+        // check user is login
+        var user = firebase.auth().currentUser;
+        if (user == null) {
+          alert("Login first");
+          $('#actionModal').modal('hide');
+          return;
+        }
+        var lat = markerModal.getPosition().lat();
+        var lng = markerModal.getPosition().lng();
+        var action = $("#actionModalLabel").html();
+        var pointType;
+        if (action==="PokeStop") {
+          pointType = "pokestop";
+        } else if (action==="Gym") {
+          pointType = "gym";
+        } else if (action==="Pokemon Point") {
+          pointType = "pokemonPoint";
+        }
+        savePoint(pointType, lat, lng);
+        $('#actionModal').modal('hide');
+      }
+    </script>
+
+    <!-- nev bar -->
+    <nav class="navbar navbar-fixed-top navbar-dark bg-primary">
+      <a class="navbar-brand" href="#">PokeLoc</a>
+      <div class="pull-xs-right nav navbar-nav">
+        <a class="nav-item nav-link active" id="userInfo" href="#"></a>
+        <a class="nav-item nav-link" id="btnLoginWithFacebook" href="javascript:loginWithFacebook()">
+        </a>
+      </div>
+    </nav>
+
     <!-- firebase -->
     <script type="text/javascript">
       var provider = new firebase.auth.FacebookAuthProvider();
+
+      // Get a reference to the database service
+      var database = firebase.database();
+      var pointsRef = database.ref('points/');
 
       // global event
       firebase.auth().onAuthStateChanged(function(user) {
@@ -78,13 +274,41 @@
           $("#btnLoginWithFacebook").html("Logout");
 
           $("#userInfo").html("hello " + user.displayName);
+
+          bindDatabaseRefEvent();
         } else {
           // No user is signed in.
           $("#btnLoginWithFacebook").html("Login with Facebook");
 
           $("#userInfo").html("");
+
+          unbindDatabaseRefEvent();
+
+          clearAllMarkers();
         }
       });
+
+      function bindDatabaseRefEvent() {
+        pointsRef.on('child_added', function(data) {
+          console.log("child_added");
+          console.log(data);
+          drawMarkerOnMap(data.val().pointType, data.val().lat, data.val().lng, data.val().author);
+        });
+
+        pointsRef.on('child_changed', function(data) {
+          console.log("child_changed");
+          console.log(data);
+        });
+
+        pointsRef.on('child_removed', function(data) {
+          console.log("child_removed");
+          console.log(data);
+        });
+      }
+
+      function unbindDatabaseRefEvent() {
+        pointsRef.off();
+      }
 
       // btnLoginWithFacebook action
       function loginWithFacebook() {
@@ -125,55 +349,37 @@
         }
 
       }
+
+      // action
+      // pointType: pokestop, gym, pokemonPoint
+      function savePoint(pointType, lat, lng) {
+        var user = firebase.auth().currentUser;
+        // A post entry.
+        var postData = {
+          author: user.displayName,
+          authorPic: user.photoURL,
+          uid: user.uid,
+          pointType: pointType,
+          lat: lat,
+          lng: lng,
+          timestamp: Date.now()
+        };
+
+        // Get a key for a new Post.
+        var newPostKey = database.ref().child('points').push().key;
+
+        // Write the new post's data simultaneously in the posts list and the user's post list.
+        var updates = {};
+        updates['/points/' + newPostKey] = postData;
+        updates['/'+pointType+'/' + newPostKey] = postData;
+        updates['/user-points/' + user.uid + '/' + newPostKey] = postData;
+
+        return database.ref().update(updates);
+      }
     </script>
-
-    <!-- content -->
-    <div class="container-fluid height-full">
-      <div class="row height-full">
-        <div class="col-sm-8 height-full">
-          <div class="width-full height-full" id="map"></div>
-          <script>
-            function initMap() {
-              // Create a map object and specify the DOM element for display.
-              var map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: 12.40, lng: 99.90},
-                zoom: 5
-              });
-            }
-
-          </script>
-        </div>
-        <div class="col-sm-4 height-full">
-          One of three columns
-        </div>
-      </div>
-
-      <div class="row">
-        <div class="col-sm-12">
-          <p>
-            <div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- nev bar -->
-    <nav class="navbar navbar-fixed-top navbar-dark bg-primary">
-      <a class="navbar-brand" href="#">PokeLoc</a>
-      <div class="pull-xs-right nav navbar-nav">
-        <a class="nav-item nav-link active" id="userInfo" href="#"></a>
-        <a class="nav-item nav-link" id="btnLoginWithFacebook" href="javascript:loginWithFacebook()">
-          Login with Facebook
-        </a>
-      </div>
-    </nav>
 
     <!-- bootstrap 4 -->
     <!-- jQuery first, then Tether, then Bootstrap JS. -->
-    <script
-    src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"
-    integrity="sha384-THPy051/pYDQGanwU6poAc/hOdQxjnOEXzbT+OuUAFqNqFjL+4IGLBgCJC3ZOShY"
-    crossorigin="anonymous"></script>
     <script
     src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.2.0/js/tether.min.js"
     integrity="sha384-Plbmg8JY28KFelvJVai01l8WyZzrYWG825m+cZ0eDDS1f7d/js6ikvy1+X+guPIB"

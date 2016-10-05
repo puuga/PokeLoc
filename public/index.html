@@ -50,6 +50,10 @@
       .width-full {
         width: 100%;
       }
+      .img-100 {
+        max-width: 48px;
+        max-height: 48px;
+      }
     </style>
   </head>
   <body>
@@ -131,7 +135,12 @@
               })
             }
 
-            function drawMarkerOnMap(pointType, lat, lng, displayName) {
+            function drawMarkerOnMap(data) {
+              var pointType = data.val().pointType
+              var lat = data.val().lat
+              var lng = data.val().lng
+              var displayName = data.val().author
+              var displayPicture = data.val().authorPic
               var imageUrl;
               if (pointType === "pokestop") {
                 imageUrl = "images/marker_pokestop.png";
@@ -155,8 +164,9 @@
                 title: pointType + "\nby: " + displayName,
                 animation: google.maps.Animation.DROP
               });
-              var message = "by " + displayName + "<br/>"
-              + pointType + "<br/>@ " + lat + ", " + lng;
+              var message = "<img src='"+ displayPicture +"' class='img-100 img-circle pull-xs-left '> "
+              + "<p><br/>" + displayName + "<br/><br/>"
+              + pointType + "<br/>@ " + lat + ", " + lng + "</p>";
               attachSecretMessage(marker, message)
               makersOnMap.push(marker);
             }
@@ -371,7 +381,7 @@
         pointsRef.on('child_added', function(data) {
           console.log("child_added");
           console.log(data);
-          drawMarkerOnMap(data.val().pointType, data.val().lat, data.val().lng, data.val().author);
+          drawMarkerOnMap(data);
         });
 
         pointsRef.on('child_changed', function(data) {

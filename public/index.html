@@ -114,6 +114,7 @@
                 console.log('zoom_changed');
                 console.log("zoom: "+map.getZoom());
                 if (typeof(Storage) !== "undefined") {
+                  recentZoom = map.getZoom();
                   sessionStorage.zoomLevel = map.getZoom();
                 }
               })
@@ -122,6 +123,8 @@
                 console.log('center_changed');
                 console.log(map.getCenter());
                 if (typeof(Storage) !== "undefined") {
+                  recentLat = map.getCenter().lat();
+                  recentLng = map.getCenter().lng();
                   sessionStorage.lat = map.getCenter().lat();
                   sessionStorage.lng = map.getCenter().lng();
                 }
@@ -152,7 +155,20 @@
                 title: pointType + "\nby: " + displayName,
                 animation: google.maps.Animation.DROP
               });
+              var message = "by " + displayName + "<br/>"
+              + pointType + "<br/>@ " + lat + ", " + lng;
+              attachSecretMessage(marker, message)
               makersOnMap.push(marker);
+            }
+
+            function attachSecretMessage(marker, message) {
+              var infowindow = new google.maps.InfoWindow({
+                content: message
+              });
+
+              marker.addListener('click', function() {
+                infowindow.open(marker.get('map'), marker);
+              });
             }
 
             function clearAllMarkers() {
@@ -257,14 +273,14 @@
       function initMapModal(markerType) {
         // Create a map object and specify the DOM element for display.
         mapModal = new google.maps.Map(document.getElementById('mapModal'), {
-          center: {lat: 12.40, lng: 99.90},
-          zoom: 5
+          center: {lat: recentLat, lng: recentLng},
+          zoom: recentZoom
         });
 
         // Create a marker and set its position.
         markerModal = new google.maps.Marker({
           map: mapModal,
-          position: {lat: 12.40, lng: 99.90},
+          position: {lat: recentLat, lng: recentLng},
           draggable: true,
           animation: google.maps.Animation.DROP,
           title: markerType.title

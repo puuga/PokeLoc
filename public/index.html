@@ -119,28 +119,35 @@
         <!-- card list -->
         <div class="col-sm-4 height-full">
 
-          <!-- add -->
+          <!-- add buttons -->
           <div class="row">
-            <div class="col-sm-6">
-              <button type="button" class="btn btn-info"
+            <div class="col-sm-12">
+              <p>
+                <div class="fb-like" data-share="true" data-show-faces="true"></div>
+              </p>
+            </div>
+            <div class="col-sm-12">
+              <button type="button" class="btn btn-outline-info btn-sm"
               data-toggle="modal" data-target="#actionModal"
               data-action="PokeStop">
                 Add PokéStop
               </button>
-            </div>
-            <div class="col-sm-6">
-              <button type="button" class="btn btn-secondary"
+              <button type="button" class="btn btn-outline-secondary btn-sm"
               data-toggle="modal" data-target="#actionModal"
               data-action="Gym">
                 Add Gym
               </button>
-            </div>
-            <div class="col-sm-6">
-              <button type="button" class="btn btn-warning"
+              <button type="button" class="btn btn-outline-warning btn-sm"
               data-toggle="modal" data-target="#actionModal"
               data-action="Pokemon Point">
                 Add Pokémon Point
               </button>
+            </div>
+            <div class="col-sm-4">
+
+            </div>
+            <div class="col-sm-4">
+
             </div>
           </div>
 
@@ -150,13 +157,6 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="col-sm-12">
-          <p>
-            <div class="fb-like" data-share="true" data-width="450" data-show-faces="true"></div>
-          </p>
-        </div>
-      </div>
     </div>
 
     <!-- action modal -->
@@ -310,6 +310,7 @@
         pointsRef.off();
       }
 
+      // action
       // btnLoginWithFacebook action
       function loginWithFacebook() {
         var user = firebase.auth().currentUser;
@@ -347,10 +348,8 @@
             // ...
           });
         }
-
       }
 
-      // action
       // pointType: pokestop, gym, pokemonPoint
       function savePoint(pointType, lat, lng) {
         var user = firebase.auth().currentUser;

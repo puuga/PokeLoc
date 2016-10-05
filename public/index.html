@@ -82,6 +82,20 @@
           <script>
             var map, mapModal, markerModal;
             var makersOnMap = [];
+            var recentZoom = 5;
+            var recentLat = 12.40;
+            var recentLng = 99.90;
+            if (typeof(Storage) !== "undefined") {
+              if (sessionStorage.zoomLevel) {
+                recentZoom = Number(sessionStorage.zoomLevel);
+              }
+              if (sessionStorage.lat) {
+                recentLat = Number(sessionStorage.lat);
+              }
+              if (sessionStorage.lng) {
+                recentLng = Number(sessionStorage.lng);
+              }
+            }
 
             var markerInfo = {
               pokestop:{type:1,title:"PokéStop"},
@@ -92,15 +106,49 @@
             function initMap() {
               // Create a map object and specify the DOM element for display.
               map = new google.maps.Map(document.getElementById('map'), {
-                center: {lat: 12.40, lng: 99.90},
-                zoom: 5
+                center: {lat: recentLat, lng: recentLng},
+                zoom: recentZoom
               });
+
+              map.addListener('zoom_changed', function() {
+                console.log('zoom_changed');
+                console.log("zoom: "+map.getZoom());
+                if (typeof(Storage) !== "undefined") {
+                  sessionStorage.zoomLevel = map.getZoom();
+                }
+              })
+
+              map.addListener('center_changed', function() {
+                console.log('center_changed');
+                console.log(map.getCenter());
+                if (typeof(Storage) !== "undefined") {
+                  sessionStorage.lat = map.getCenter().lat();
+                  sessionStorage.lng = map.getCenter().lng();
+                }
+              })
             }
 
             function drawMarkerOnMap(pointType, lat, lng, displayName) {
+              var imageUrl;
+              if (pointType === "pokestop") {
+                imageUrl = "images/marker_pokestop.png";
+              } else if (pointType === "gym") {
+                imageUrl = "images/marker_gym.png";
+              } else if (pointType === "pokemonPoint") {
+                imageUrl = "images/marker_pokemon.png";
+              }
+
+              var image = {
+                url: imageUrl,
+                size: new google.maps.Size(71, 71),
+                origin: new google.maps.Point(0, 0),
+                anchor: new google.maps.Point(0, 10),
+                scaledSize: new google.maps.Size(25, 25)
+              };
               var marker = new google.maps.Marker({
                 position: {lat: lat, lng: lng},
                 map: map,
+                icon: image,
                 title: pointType + "\nby: " + displayName,
                 animation: google.maps.Animation.DROP
               });

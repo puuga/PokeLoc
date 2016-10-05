@@ -143,17 +143,12 @@
                 Add Pokémon Point
               </button>
             </div>
-            <div class="col-sm-4">
-
-            </div>
-            <div class="col-sm-4">
-
-            </div>
           </div>
 
           <!-- list -->
           <div class="row height-full">
           </div>
+
         </div>
       </div>
 
@@ -170,6 +165,13 @@
             <h4 class="modal-title" id="actionModalLabel">New message</h4>
           </div>
           <div class="modal-body">
+            <div class="row">
+              <div class="col-sm-12">
+                <p>
+                  Click on map or drag the marker
+                </p>
+              </div>
+            </div>
             <div class="row">
               <div class="col-sm-12">
                 <div class="width-full" style="height:400px" id="mapModal"></div>
@@ -220,9 +222,22 @@
           title: markerType.title
         });
 
-        google.maps.event.addListener(markerModal, 'dragend', function() {
+        mapModal.addListener('click', function(event) {
+          console.log('click');
+          var position = event.latLng
+          console.log("lat: "+position.lat()+", lng: "+position.lng());
+
+          markerModal.setPosition(position)
+        })
+
+        markerModal.addListener('dragend', function() {
+          console.log('dragend');
           console.log("lat: "+markerModal.getPosition().lat()+", lng: "+markerModal.getPosition().lng());
-        });
+        })
+
+        // google.maps.event.addListener(markerModal, 'dragend', function() {
+        //   console.log("lat: "+markerModal.getPosition().lat()+", lng: "+markerModal.getPosition().lng());
+        // });
       }
 
       function prepareSavePoint() {

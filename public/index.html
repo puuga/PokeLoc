@@ -288,7 +288,23 @@
         });
 
         // Create a marker and set its position.
+        var imageUrl;
+        if (markerType.title === markerInfo.pokestop.title) {
+          imageUrl = "images/marker_pokestop.png";
+        } else if (markerType.title === markerInfo.gym.title) {
+          imageUrl = "images/marker_gym.png";
+        } else if (markerType.title === markerInfo.pokemonPoint.title) {
+          imageUrl = "images/marker_pokemon.png";
+        }
+        var image = {
+          url: imageUrl,
+          size: new google.maps.Size(80, 80),
+          origin: new google.maps.Point(0, 0),
+          anchor: new google.maps.Point(25, 30),
+          scaledSize: new google.maps.Size(40, 40)
+        };
         markerModal = new google.maps.Marker({
+          icon: image,
           map: mapModal,
           position: {lat: recentLat, lng: recentLng},
           draggable: true,

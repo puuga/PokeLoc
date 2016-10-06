@@ -164,10 +164,21 @@
                 title: pointType + "\nby: " + displayName,
                 animation: google.maps.Animation.DROP
               });
-              var message = "<img src='"+ displayPicture +"' class='img-100 img-circle pull-xs-left '> "
-              + "<p><br/>" + displayName + "<br/><br/>"
-              + pointType + "<br/>@ " + lat + ", " + lng + "</p>";
+              var message = ""
+              var user = firebase.auth().currentUser;
+              if (user.uid === data.val().uid) {
+                message = "<img src='"+ displayPicture +"' class='img-100 img-circle pull-xs-left '> "
+                + "<p><br/>" + displayName + "<br/><br/>"
+                + pointType + "<br/>@ " + lat + ", " + lng + "<br/>"
+                + "<a href='javascript:deletePoint(" + makersOnMap.length + ")'>Delete</a>" + "</p>";
+              } else {
+                message = "<img src='"+ displayPicture +"' class='img-100 img-circle pull-xs-left '> "
+                + "<p><br/>" + displayName + "<br/><br/>"
+                + pointType + "<br/>@ " + lat + ", " + lng + "</p>";
+              }
               attachSecretMessage(marker, message)
+
+              marker.firebase = data;
               makersOnMap.push(marker);
             }
 
@@ -186,6 +197,29 @@
                 makersOnMap[i].setMap(null);
               }
               makersOnMap = [];
+            }
+
+            function deletePoint(makersOnMapIndex) {
+              console.log("deletePoint: " + makersOnMapIndex);
+              console.log(makersOnMap[makersOnMapIndex].firebase);
+
+              // delete data in db
+              var toDeleteKey = makersOnMap[makersOnMapIndex].firebase.key;
+              var pointType = makersOnMap[makersOnMapIndex].firebase.val().pointType;
+              var uid = makersOnMap[makersOnMapIndex].firebase.val().uid;
+
+              // make database ref for each ref
+              var pointToDeleteRef = database.ref('points/' + toDeleteKey);
+              var pointTypeToDeleteRef = database.ref(pointType + '/' + toDeleteKey);
+              var userPointToDeleteRef = database.ref('user-points/' + uid + '/' + toDeleteKey);
+
+              pointToDeleteRef.remove();
+              pointTypeToDeleteRef.remove();
+              userPointToDeleteRef.remove();
+
+              // delete marker
+              makersOnMap[makersOnMapIndex].setMap(null);
+
             }
           </script>
         </div>

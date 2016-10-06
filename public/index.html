@@ -204,14 +204,14 @@
               console.log(makersOnMap[makersOnMapIndex].firebase);
 
               // delete data in db
-              var toDeleteKey = makersOnMap[makersOnMapIndex].firebase.key;
+              var keyToDelete = makersOnMap[makersOnMapIndex].firebase.key;
               var pointType = makersOnMap[makersOnMapIndex].firebase.val().pointType;
               var uid = makersOnMap[makersOnMapIndex].firebase.val().uid;
 
               // make database ref for each ref
-              var pointToDeleteRef = database.ref('points/' + toDeleteKey);
-              var pointTypeToDeleteRef = database.ref(pointType + '/' + toDeleteKey);
-              var userPointToDeleteRef = database.ref('user-points/' + uid + '/' + toDeleteKey);
+              var pointToDeleteRef = database.ref('points/' + keyToDelete);
+              var pointTypeToDeleteRef = database.ref(pointType + '/' + keyToDelete);
+              var userPointToDeleteRef = database.ref('user-points/' + uid + '/' + keyToDelete);
 
               pointToDeleteRef.remove();
               pointTypeToDeleteRef.remove();

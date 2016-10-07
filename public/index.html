@@ -143,7 +143,7 @@
               var displayPicture = data.val().authorPic
               var imageUrl;
               if (pointType === "pokestop") {
-                imageUrl = "images/marker_pokestop.png";
+                imageUrl = "images/marker_pokestop_sm.png";
               } else if (pointType === "gym") {
                 imageUrl = "images/marker_gym.png";
               } else if (pointType === "pokemonPoint") {
@@ -326,9 +326,9 @@
         if (markerType.title === markerInfo.pokestop.title) {
           imageUrl = "images/marker_pokestop.png";
         } else if (markerType.title === markerInfo.gym.title) {
-          imageUrl = "images/marker_gym.png";
+          imageUrl = "images/marker_gym_sm.png";
         } else if (markerType.title === markerInfo.pokemonPoint.title) {
-          imageUrl = "images/marker_pokemon.png";
+          imageUrl = "images/marker_pokemon_sm.png";
         }
         var image = {
           url: imageUrl,

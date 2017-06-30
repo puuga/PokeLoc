@@ -8,7 +8,8 @@
     <title>PokeLoc</title>
 
     <!-- firebase -->
-    <script src="https://www.gstatic.com/firebasejs/3.4.1/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.5.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.5.0/firebase-messaging.js"></script>
     <script>
       // Initialize Firebase
       var config = {
@@ -397,6 +398,55 @@
         </a>
       </div>
     </nav>
+
+    <!-- firebase messaging -->
+    <script type="text/javascript">
+      // Retrieve Firebase Messaging object.
+      const messaging = firebase.messaging();
+
+      messaging.requestPermission()
+      .then(function() {
+        console.log('Notification permission granted.');
+        // TODO(developer): Retrieve a Instance ID token for use with FCM.
+        messaging.getToken()
+        .then(function(currentToken) {
+          if (currentToken) {
+            console.log('currentToken.', currentToken);
+          } else {
+            // Show permission request.
+            console.log('No Instance ID token available. Request permission to generate one.');
+          }
+        })
+        .catch(function(err) {
+          console.log('An error occurred while retrieving token. ', err);
+          // showToken('Error retrieving Instance ID token. ', err);
+          // setTokenSentToServer(false);
+        });
+
+      })
+      .catch(function(err) {
+        console.log('Unable to get permission to notify. ', err);
+      });
+
+      messaging.onMessage(function(payload) {
+        console.log("Message received.");
+        console.log(payload);
+        // ...
+      });
+
+      messaging.setBackgroundMessageHandler(function(payload) {
+        console.log('[firebase-messaging-sw.js] Received background message ', payload);
+        // Customize notification here
+        const notificationTitle = 'Background Message Title';
+        const notificationOptions = {
+          body: 'Background Message body.',
+          icon: 'images/firebase-logo.png'
+        };
+
+        return self.registration.showNotification(notificationTitle,
+            notificationOptions);
+      });
+    </script>
 
     <!-- firebase -->
     <script type="text/javascript">
